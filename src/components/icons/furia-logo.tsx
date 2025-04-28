@@ -16,6 +16,7 @@ export function FuriaLogo(props: SVGProps<SVGSVGElement>) {
       <path d="M20 80 L50 20 L80 80 Z" strokeWidth="5" fill="currentColor" />
       <path d="M35 80 L50 50 L65 80" strokeWidth="3" stroke="hsl(var(--background))" />
        <title>FURIA Logo</title>
+       img
     </svg>
   );
 }
