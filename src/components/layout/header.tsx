@@ -42,7 +42,7 @@ export default function Header() {
         <Link href="/" className="hover:text-primary duration-200 hover:scale-110">
           <CameraIcon size={20} />
         </Link>
-        <Link href="/" className="hover:text-primary duration-200 hover:scale-110">
+        <Link href="/login" className="hover:text-primary duration-200 hover:scale-110">
           <User size={20} />
         </Link>
       </div>

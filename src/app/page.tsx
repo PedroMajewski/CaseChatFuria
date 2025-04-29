@@ -1,6 +1,6 @@
 import LiveGameStatusDisplay from '@/components/live-game-status';
 import NewsFeed from '@/components/news-feed';
-import ChatInterface from '@/components/chat/chat-interface';
+import ChatInterface from '@/components/sections/chat-interface';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,9 +28,11 @@ export default function Home() {
         </p>
          {/* Placeholder Login/Signup - Replace with actual auth later */}
         <div className="mt-6">
+          <Link href={"/login"}>
            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
               Entre na Torcida! (Log In / Sign Up)
            </Button>
+           </Link>
         </div>
       </section>
 

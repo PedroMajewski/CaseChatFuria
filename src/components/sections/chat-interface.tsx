@@ -27,7 +27,6 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
   const [inputValue, setInputValue] = useState('');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // Mock initial messages based on room
   useEffect(() => {
     let initialMessages: Message[] = [];
     if (chatRoomId === 'general') {

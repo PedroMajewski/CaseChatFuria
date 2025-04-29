@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
-import Header from '@/components/layout/Header';
+import Header from '@/components/layout/header';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Furia Fan Zone',
-  description: 'Your central hub for everything FURIA CS:GO',
+  description: 'Sua central para a FURIA CS:GO',
 };
 
 export default function RootLayout({
@@ -26,14 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="dark"> {/* Force dark theme */}
+    <html lang="pt-BR" className="dark">
       <body className={cn(
         geistSans.variable,
         geistMono.variable,
         "antialiased font-sans"
       )}>
         <div className="flex flex-col min-h-screen">
-          <Header /> {/* Add the Header */}
+          <Header />
           <main className="flex-grow">
             {children}
           </main>
