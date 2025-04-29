@@ -5,7 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { MessageSquare, Users, Bot } from 'lucide-react'; // Icons for tabs
+import { MessageSquare, Users, Bot } from 'lucide-react';
+
+//Components
+import LiveorCarousel from '@/components/sections/LiveorCarousel';
 
 export default function Home() {
   // Mock match ID, in a real app this might come from routing or state management
@@ -14,16 +17,19 @@ export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-12">
 
+      {/* Carousel Section / Welcome */}
+      <LiveorCarousel/>
+
       {/* Hero Section / Welcome */}
       <section className="text-center py-10 bg-gradient-to-r from-primary/10 via-background to-primary/10 rounded-lg shadow-inner">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary tracking-tight">Welcome to the Furia Fan Zone!</h1>
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary tracking-tight">Bem Vindo ao FURIA Fan Zone!</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Your central hub for live games, news, and connecting with the FURIA community. VAMO!
+          Sua central de informações da Furia em Primeira Mão!
         </p>
          {/* Placeholder Login/Signup - Replace with actual auth later */}
         <div className="mt-6">
            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Join the Torcida! (Log In / Sign Up)
+              Entre na Torcida! (Log In / Sign Up)
            </Button>
         </div>
       </section>
@@ -36,16 +42,16 @@ export default function Home() {
            <Card className="shadow-md bg-card/80 backdrop-blur">
              <CardHeader>
                <CardTitle className="text-primary">Live Action</CardTitle>
-               <CardDescription>Join the chat during live matches!</CardDescription>
+               <CardDescription>Participe do chat em tempo real!</CardDescription>
              </CardHeader>
              <CardContent>
-               <p className="mb-4 text-muted-foreground">Experience the thrill of FURIA's matches in real-time with fellow fans.</p>
+               <p className="mb-4 text-muted-foreground">Viva a experiência de conversar com quem também entende do assunto.</p>
                {/* Button linking to chat or a specific match page */}
-               <Button variant="outline" className="w-full" disabled>Participate in Match Chat (Requires Login)</Button>
+               <Button variant="outline" className="w-full" disabled>Participe do Chat Match (Requer Login)</Button>
              </CardContent>
            </Card>
 
-          <LiveGameStatusDisplay matchId={currentMatchId} />
+          <LiveGameStatusDisplay matchId={currentMatchId} /> {/*Live Status em tempo real*/}
           <NewsFeed />
 
           {/* Placeholder for History/Polls */}
@@ -66,13 +72,13 @@ export default function Home() {
           <Tabs defaultValue="general" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger value="general">
-                 <Users className="h-4 w-4 mr-2" /> General
+                 <Users className="h-4 w-4 mr-2" /> Geral
               </TabsTrigger>
               <TabsTrigger value="match">
-                 <MessageSquare className="h-4 w-4 mr-2" /> Match Chat
+                 <MessageSquare className="h-4 w-4 mr-2" /> Chat Match
               </TabsTrigger>
               <TabsTrigger value="simulated">
-                 <Bot className="h-4 w-4 mr-2" /> Simulate
+                 <Bot className="h-4 w-4 mr-2" /> Converse com o time
                </TabsTrigger>
             </TabsList>
             <TabsContent value="general">
