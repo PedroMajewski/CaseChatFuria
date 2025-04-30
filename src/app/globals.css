@@ -42,7 +42,9 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
   }
+
 
   .dark {
     /* Furia Theme (Dark by default) */
@@ -54,8 +56,8 @@ body {
     --popover-foreground: 0 0% 98%; /* White */
     --primary: 51 100% 50%; /* Gold */
     --primary-foreground: 0 0% 3.9%; /* Black */
-    --secondary: 0 0% 14.9%; /* Darker Grey */
-    --secondary-foreground: 0 0% 98%; /* White */
+    --secondary: 0 0% 98%; /* Darker Grey */
+    --secondary-foreground: 0 0% 14.9%; /* White */
     --muted: 0 0% 14.9%; /* Darker Grey */
     --muted-foreground: 0 0% 63.9%; /* Light Grey */
     --accent: 51 100% 50%; /* Gold */

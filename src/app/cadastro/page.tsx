@@ -20,13 +20,15 @@ import Link from "next/link";
 
 // Zod schema
 const LoginSchema = z.object({
+name: z.string().min(2, "O nome deve ter no mínimo 2 caracteres."),
+  username: z.string().min(3, "O nome de usuário deve ter no mínimo 3 caracteres."),
   email: z.string().email("Digite um e-mail válido."),
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres."),
 });
 
 type LoginData = z.infer<typeof LoginSchema>;
 
-export default function LoginPage() {
+export default function CadastroPage() {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<LoginData>({
@@ -65,22 +67,43 @@ export default function LoginPage() {
     >
       <div className="flex flex-col-reverse md:flex-row w-full max-w-4xl bg-white/10 rounded-lg shadow-lg backdrop-blur-sm overflow-hidden">
         
-        <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-6 md:p-8 space-y-4 border-t md:border-t-0 md:border-r border-white/20">
-          <h2 className="text-2xl md:text-3xl font-bold italic uppercase text-center">Novo por aqui?</h2>
-          <p className="text-center text-sm md:text-base">Junte-se à Fúria e crie sua conta agora mesmo.</p>
-          <Link href="/cadastro">
-            <Button variant="secondary" className="w-full md:w-auto">Cadastrar</Button>
-          </Link>
-        </div>
-
         <section className="w-full md:w-1/2 p-6 md:p-8 space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl md:text-3xl font-bold italic mb-2 uppercase">Bem-vindo Furioso!</h2>
-            <p className="text-muted-foreground text-sm">Entre com seu email e senha para continuar!</p>
+            <h2 className="text-2xl md:text-3xl font-bold italic mb-2 uppercase">Cadastro Fúria!</h2>
+            <p className="text-muted-foreground text-sm">Junte-se à nossa equipe!</p>
           </div>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+
+            <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Seu Nome</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Ex: Gabriel Toledo" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+            <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome de Usuário</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Ex: FalleN" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="email"

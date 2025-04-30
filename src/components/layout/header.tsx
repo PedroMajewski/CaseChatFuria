@@ -12,7 +12,7 @@ export default function Header() {
       <div className="flex items-center space-x-4">
         <Link href="/" className="flex items-center space-x-2">
           <img
-            src="https://gamepedia.cursecdn.com/lolesports_gamepedia_en/e/e4/FURIA_Esportslogo_square.png"
+            src="/assets/FuriaEsportsLogo.png"
             alt="Furia Logo"
             width={30}
             className="mr-2"
