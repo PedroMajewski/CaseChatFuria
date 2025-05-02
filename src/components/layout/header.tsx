@@ -52,7 +52,7 @@ export default function Header() {
         {!user ? (
           <Link href={"/login"} className="hover:text-primary duration-200 hover:scale-110"><User size={20} /></Link>
         ) : (
-          <Link href={"/login"} className="hover:text-primary duration-200 hover:scale-110"><User size={20} /></Link>
+          <Link href={"/login"} ><User size={20} /></Link>
         )}
         {!user && (
           <Link href={"/login"}><Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Log In / Sign Up</Button></Link>

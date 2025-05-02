@@ -19,7 +19,7 @@ import { db } from '@/lib/firebaseConfig';
 export default function HomePage() {
 
   const { user, loading } = useAuth();
-  const [nome,setNome] = useState("");
+  const [username, setUserName] = useState("");
 
   // Mock match ID, in a real app this might come from routing or state management
   const currentMatchId = "mock-match-123";
@@ -29,16 +29,12 @@ export default function HomePage() {
       if (!user?.email) return;
 
       try {
-        const q = query(
-          collection(db, "usuarios"),
-          where("email", "==", user.email)
-        );
-
+        const q = query(collection(db, "usuarios"), where("email", "==", user.email));
         const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          const dadosUsuario = querySnapshot.docs[0].data();
-          setNome(dadosUsuario.nome);
-        }
+        querySnapshot.forEach((doc) => {
+        const userData = doc.data();
+        setUserName(userData.username);
+        });
       } catch (err) {
         console.error("Erro ao buscar nome do usuário:", err);
       }
@@ -63,7 +59,11 @@ export default function HomePage() {
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Sua central de informações da Furia em Primeira Mão!
         </p>
-        {user && (<h2>Ta em casa - {nome} !</h2>)}
+        {user && (
+            <p className="text-2xl mt-5 font-normal max-w-2xl mx-auto">
+            Agora você ta na casa! - <strong>{username}</strong>
+          </p>
+        )}
          {!user && (
         <div className="mt-6">
           <Link href={"/login"}>
