@@ -2,9 +2,11 @@
 
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebaseConfig";
+import { auth, db, app } from "@/lib/firebaseConfig";
+import { collection, getDocs } from 'firebase/firestore';
+import { Timestamp } from "firebase/firestore";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,6 +51,7 @@ export default function CadastroPage() {
       password: "",
       username: "",
       name: "",
+      nascimento: ""
     }
   });
 
@@ -71,14 +74,16 @@ export default function CadastroPage() {
         name: data.name,
         username: data.username,
         email: data.email,
-        nascimento: formattedNascimento,
-        createdAt: new Date().toISOString(),
+        nascimento: Timestamp.fromDate(new Date(data.nascimento)),
+        createdAt: Timestamp.now(),
       });
+  
 
       toast({
         title: "Cadastro realizado com sucesso!",
         description: `Bem-vindo, ${data.name}!`,
       });
+      
     }catch(error: any){
       let message = "Erro ao cadastrar. Tente novamente.";
      if (error.code === "auth/email-already-in-use") {
@@ -92,18 +97,6 @@ export default function CadastroPage() {
     }finally{
       setLoading(false)
     }
-
-    setTimeout(() => {
-      toast({
-        title: "Login simulado com sucesso!",
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 overflow-x-auto">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        ),
-      });
-      setLoading(false);
-    }, 1500);
   };
 
   return (
@@ -181,7 +174,7 @@ export default function CadastroPage() {
                       <FormItem>
                         <FormLabel>Data de Nascimento</FormLabel>
                         <FormControl>
-                          <Input type="date" placeholder="••••••••" {...field} />
+                          <Input className="color:white" type="date" placeholder="••••••••" {...field} />
                         </FormControl>
                         <FormMessage className="text-red-500"/>
                       </FormItem>

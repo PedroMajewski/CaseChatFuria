@@ -17,11 +17,14 @@ import {
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebaseConfig";
+import { useRouter } from "next/navigation";
 
 // Zod schema
 const LoginSchema = z.object({
-  email: z.string().email("Digite um e-mail válido."),
-  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres."),
+  email: z.string(),
+  password: z.string(),
 });
 
 type LoginData = z.infer<typeof LoginSchema>;
@@ -40,17 +43,29 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginData) => {
     setLoading(true);
 
-    setTimeout(() => {
+    try{
+      const userCredential = await signInWithEmailAndPassword(auth,data.email,data.password);
+      const user = userCredential.user;
+      const router = useRouter();
+
       toast({
-        title: "Login simulado com sucesso!",
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4 overflow-x-auto">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        ),
+        title: "Login realizado com sucesso.",
+        description: `Bem vindo de volta ${data.email}!`,
       });
-      setLoading(false);
-    }, 1500);
+
+      router.push("/")
+
+
+    }catch(error){
+      toast({
+        title: "Erro ao realizar o login :(",
+        description: `Verifique suas crendencias!`,
+        variant: "destructive",
+      });
+      console.log(error)
+    }
+
+    setLoading(false)
   };
 
   return (

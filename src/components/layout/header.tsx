@@ -1,7 +1,14 @@
+"use client"
+
 import Link from 'next/link';
 import { User, MessageCircleIcon, CameraIcon } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { Button } from '../ui/button';
 
 export default function Header() {
+
+  const { user, loading } = useAuth();
+
   return (
     <header
       id="headerPrincipal"
@@ -42,9 +49,14 @@ export default function Header() {
         <Link href="/" className="hover:text-primary duration-200 hover:scale-110">
           <CameraIcon size={20} />
         </Link>
-        <Link href="/login" className="hover:text-primary duration-200 hover:scale-110">
-          <User size={20} />
-        </Link>
+        {!user ? (
+          <Link href={"/login"} className="hover:text-primary duration-200 hover:scale-110"><User size={20} /></Link>
+        ) : (
+          <Link href={"/login"} className="hover:text-primary duration-200 hover:scale-110"><User size={20} /></Link>
+        )}
+        {!user && (
+          <Link href={"/login"}><Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Log In / Sign Up</Button></Link>
+        )}
       </div>
     </header>
   );

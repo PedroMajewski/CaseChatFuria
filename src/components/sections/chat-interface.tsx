@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SendHorizonal, Bot, User } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 interface Message {
   id: string;
@@ -26,6 +27,8 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { user, loading } = useAuth();
+  
 
   useEffect(() => {
     let initialMessages: Message[] = [];
@@ -169,20 +172,35 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
           </div>
         </ScrollArea>
       </CardContent>
-      <CardFooter className="p-4 border-t">
+      <CardFooter className="p()-4 border-t">
         <div className="flex w-full items-center gap-2">
-          <Input
-            type="text"
-            placeholder="Type your message..."
-            value={inputValue}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            className="flex-grow"
-            aria-label="Chat message input"
-          />
-          <Button onClick={handleSendMessage} size="icon" aria-label="Send message">
-            <SendHorizonal className="h-5 w-5" />
-          </Button>
+          {user ? (
+            <>
+              <Input
+                type="text"
+                placeholder="Digite sua mensagem..."
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                className="flex-grow mt-5"
+                aria-label="MensagemInput"
+              />
+              <Button className='mt-5 h-9' onClick={handleSendMessage} size="icon" aria-label="Send message">
+                <SendHorizonal className="h-5 w-5" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Input
+                type="text"
+                placeholder="Você tem que realizar o login para usar essas funcionaldiades - Realize acima guerreiro!"
+                value={inputValue}
+                className="flex-grow mt-5 text-center"
+                aria-label="MensagemInput"
+                disabled
+              />
+            </>
+          )}
         </div>
       </CardFooter>
     </Card>
