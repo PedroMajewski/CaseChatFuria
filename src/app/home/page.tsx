@@ -20,6 +20,7 @@ export default function HomePage() {
 
   const { user, loading } = useAuth();
   const [username, setUserName] = useState("");
+  const [name,setName] = useState("");
 
   // Mock match ID, in a real app this might come from routing or state management
   const currentMatchId = "mock-match-123";
@@ -34,6 +35,7 @@ export default function HomePage() {
         querySnapshot.forEach((doc) => {
         const userData = doc.data();
         setUserName(userData.username);
+        setName(userData.name);
         });
       } catch (err) {
         console.error("Erro ao buscar nome do usuário:", err);
@@ -116,7 +118,7 @@ export default function HomePage() {
           <Tabs defaultValue="general" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger value="general">
-                 <Users className="h-4 w-4 mr-2" /> Geral
+                 <Users className="h-4 w-4 mr-2" /> Chat Geral
               </TabsTrigger>
               <TabsTrigger value="match">
                  <MessageSquare className="h-4 w-4 mr-2" /> Chat Match
@@ -126,17 +128,17 @@ export default function HomePage() {
                </TabsTrigger>
             </TabsList>
             <TabsContent value="general">
-              <ChatInterface chatRoomId="general" />
+              <ChatInterface chatRoomId="GsEj1NelD1a669Oqby68"/>
             </TabsContent>
             <TabsContent value="match">
                {/* Display Match chat only if a game is theoretically live */}
                {/* You might add logic here based on liveGameStatus data */}
-              <ChatInterface chatRoomId="match" />
+              <ChatInterface chatRoomId="match"/>
               {/* Fallback if no live game */}
               {/* <Card><CardContent><p className="text-center p-8 text-muted-foreground">No live match chat currently active.</p></CardContent></Card> */}
             </TabsContent>
              <TabsContent value="simulated">
-              <ChatInterface chatRoomId="simulated" />
+              <ChatInterface chatRoomId="simulated"/>
             </TabsContent>
           </Tabs>
         </div>

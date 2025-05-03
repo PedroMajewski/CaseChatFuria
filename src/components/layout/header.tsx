@@ -4,10 +4,29 @@ import Link from 'next/link';
 import { User, MessageCircleIcon, CameraIcon } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '../ui/button';
+import { toast } from '@/hooks/use-toast';
+import { getAuth, signOut } from 'firebase/auth';
+
 
 export default function Header() {
-
   const { user, loading } = useAuth();
+
+  const handleLogout = async function Logout() {
+    const auth = getAuth();
+    try{
+      await signOut(auth);
+      toast({
+        title: "Saindo...",
+        description: `Logout Realizado!`,
+      });
+    }catch(error){
+      toast({
+        title: "Erro ao realizar logout :(",
+        description: `Não foi possível sair do Sistema, tente novamente!`,
+        variant: "destructive"
+      });
+    }
+  }
 
   return (
     <header
@@ -54,8 +73,10 @@ export default function Header() {
         ) : (
           <Link href={"/login"} ><User size={20} /></Link>
         )}
-        {!user && (
+        {!user ? (
           <Link href={"/login"}><Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Log In / Sign Up</Button></Link>
+        ) : (
+          <Button onClick={handleLogout} className="bg-secondary/95 hover:bg-secondary/65 text-primary-foreground">Log Out</Button>
         )}
       </div>
     </header>

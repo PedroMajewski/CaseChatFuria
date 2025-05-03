@@ -2,7 +2,7 @@
 
 import type { FC } from 'react';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -10,17 +10,20 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SendHorizonal, Bot, User } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 
+//Firebase
+import { db } from '@/lib/firebaseConfig';
+import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
+
 interface Message {
   id: string;
-  sender: string; // 'user' or 'bot' or fan name
+  sender: string; 
   text: string;
   timestamp: number;
   avatar?: string;
-  isUser?: boolean;
 }
 
 interface ChatInterfaceProps {
-  chatRoomId: 'general' | 'match' | 'simulated'; // Example room IDs
+  chatRoomId: 'GsEj1NelD1a669Oqby68' | 'match' | 'simulated'; // Example room IDs
 }
 
 const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
@@ -31,6 +34,28 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
   
 
   useEffect(() => {
+    if(!chatRoomId) return;
+    
+    const messagesRef = collection(db, 'chat', chatRoomId, 'mensagens');
+    const q = query(messagesRef, orderBy('timestamp', 'asc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const msgs: Message[] = snapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      sender: data.sender,
+      text: data.text,
+      timestamp: data.timestamp?.toMillis?.() || 0,
+      avatar: data.avatar || '',
+      isUser: data.isUser || false,
+    };
+  });
+  setMessages(msgs);
+});
+
+    return () => unsubscribe();
+
+    {/*
     let initialMessages: Message[] = [];
     if (chatRoomId === 'general') {
       initialMessages = [
@@ -50,59 +75,30 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
      // Add a default user message for context
     initialMessages.push({ id: 'u0', sender: 'You', text: 'Hey everyone!', timestamp: Date.now() - 2000, isUser: true });
     setMessages(initialMessages);
+    */}
   }, [chatRoomId]);
 
-
-  // Scroll to bottom when new messages arrive
   useEffect(() => {
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [messages]);
 
-  const handleSendMessage = useCallback(() => {
+  
+  const handleSendMessage = useCallback(async () => {
     if (inputValue.trim() === '') return;
-
-    const newMessage: Message = {
-      id: `user-${Date.now()}`,
-      sender: 'You',
+  
+    const messagesRef = collection(db, 'chat', chatRoomId, 'mensagens');
+  
+    await addDoc(messagesRef, {
+      sender: user?.displayName || 'Anônimo',
       text: inputValue,
-      timestamp: Date.now(),
-      isUser: true,
-    };
-
-    setMessages(prev => [...prev, newMessage]);
+      timestamp: serverTimestamp(),
+      avatar: user?.photoURL || '',
+    });
+  
     setInputValue('');
-
-    // Simulate bot response for 'simulated' chat
-    if (chatRoomId === 'simulated') {
-      setTimeout(() => {
-        const botResponse: Message = {
-          id: `bot-${Date.now()}`,
-          sender: 'arT Bot', // Or KSCERATO Bot, etc.
-          text: `Responding to "${inputValue.substring(0, 20)}..." with some simulated AI logic! W key!`,
-          timestamp: Date.now(),
-          isUser: false,
-           avatar: '/icons/art-avatar.png'
-        };
-        setMessages(prev => [...prev, botResponse]);
-      }, 1000);
-    } else {
-       // Simulate other fans responding in general/match chat
-       setTimeout(() => {
-        const fanResponse: Message = {
-          id: `fan-${Date.now()}`,
-          sender: `RandomFan${Math.floor(Math.random() * 100)}`,
-          text: `Yeah, I agree with "${inputValue.substring(0, 15)}..."!`,
-          timestamp: Date.now(),
-          isUser: false,
-          avatar: `https://picsum.photos/seed/${Math.random()}/40/40`
-        };
-        setMessages(prev => [...prev, fanResponse]);
-      }, 1500);
-    }
-
-  }, [inputValue, chatRoomId]);
+  }, [inputValue, chatRoomId, user]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -116,9 +112,9 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
 
   const getChatTitle = () => {
     switch (chatRoomId) {
-      case 'general': return 'General Fan Chat';
-      case 'match': return 'Live Match Discussion';
-      case 'simulated': return 'Chat with arT Bot';
+      case 'GsEj1NelD1a669Oqby68': return ['Chat Geral','Aqui a chama da FURIA não se apaga'];
+      case 'match': return ['Chat da Partida','Comente aqui sobre o clutch!'];
+      case 'simulated': return ['Fale com o Time','Dê a call para nossos players'];
       default: return 'Chat';
     }
   }
@@ -126,52 +122,61 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
   return (
     <Card className="w-full h-[600px] flex flex-col shadow-lg bg-card/80 backdrop-blur">
       <CardHeader>
-        <CardTitle className="text-primary">{getChatTitle()}</CardTitle>
+        <CardTitle className="text-primary">{getChatTitle()[0]}</CardTitle>
+        <CardDescription className="text-secondary text-normal font-2xl">{getChatTitle()[1]}</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden p-0">
-        <ScrollArea className="h-full p-4" ref={scrollAreaRef}>
+        <ScrollArea className="h-full p-4 overflow-auto" ref={scrollAreaRef}>
           <div className="space-y-4">
-            {messages.map((message) => (
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex items-end gap-2 ${message.sender === user?.displayName ? 'justify-end' : 'justify-start'}`}
+            >
+              {/* Se não for mensagem do usuário atual, exibe o avatar do bot ou outro usuário */}
+              {message.sender !== user?.displayName && (
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={message.avatar} alt={message.sender} />
+                  <AvatarFallback>
+                    {message.sender.startsWith('Moderator') || message.sender.endsWith('Bot') ? (
+                      <Bot className="h-4 w-4" />
+                    ) : (
+                      message.sender[0]
+                    )}
+                  </AvatarFallback>
+                </Avatar>
+              )}
+
+              {/* Exibe a mensagem */}
               <div
-                key={message.id}
-                className={`flex items-end gap-2 ${
-                  message.isUser ? 'justify-end' : 'justify-start'
+                className={`max-w-[70%] rounded-lg px-3 py-2 ${
+                  message.sender === user?.displayName
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-secondary-foreground'
                 }`}
               >
-                {!message.isUser && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={message.avatar} alt={message.sender} />
-                    <AvatarFallback>
-                       {message.sender.startsWith('Moderator') || message.sender.endsWith('Bot') ? <Bot className="h-4 w-4" /> : message.sender[0]}
-                    </AvatarFallback>
-                  </Avatar>
+                {/* Exibe o nome do remetente, caso não seja o usuário */}
+                {message.sender !== user?.displayName && (
+                  <p className="text-xs font-semibold mb-1 opacity-80">{message.sender}</p>
                 )}
-                <div
-                  className={`max-w-[70%] rounded-lg px-3 py-2 ${
-                    message.isUser
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-secondary-foreground'
-                  }`}
-                >
-                  {!message.isUser && <p className="text-xs font-semibold mb-1 opacity-80">{message.sender}</p>}
-                  <p className="text-sm">{message.text}</p>
-                  {/* Optional: Timestamp display
-                   <p className="text-xs opacity-50 mt-1 text-right">
-                    {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                   </p>
-                   */}
-                </div>
-                 {message.isUser && (
-                   <Avatar className="h-8 w-8">
-                    {/* User avatar can be added here */}
-                    <AvatarFallback><User className="h-4 w-4" /></AvatarFallback>
-                  </Avatar>
-                 )}
+                <p className="text-sm">{message.text}</p>
               </div>
-            ))}
+
+              {/* Exibe o avatar do usuário, se for ele quem enviou a mensagem */}
+              {message.sender === user?.displayName && (
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+              )}
+            </div>
+          ))}
           </div>
         </ScrollArea>
       </CardContent>
+
+
       <CardFooter className="p()-4 border-t">
         <div className="flex w-full items-center gap-2">
           {user ? (

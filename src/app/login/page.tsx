@@ -31,6 +31,7 @@ type LoginData = z.infer<typeof LoginSchema>;
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<LoginData>({
     resolver: zodResolver(LoginSchema),
@@ -42,11 +43,8 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginData) => {
     setLoading(true);
-
     try{
-      const userCredential = await signInWithEmailAndPassword(auth,data.email,data.password);
-      const user = userCredential.user;
-      const router = useRouter();
+      await signInWithEmailAndPassword(auth,data.email,data.password);
 
       toast({
         title: "Login realizado com sucesso.",
@@ -54,7 +52,6 @@ export default function LoginPage() {
       });
 
       router.push("/")
-
 
     }catch(error){
       toast({

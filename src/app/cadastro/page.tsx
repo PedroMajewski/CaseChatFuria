@@ -6,9 +6,9 @@ import { auth, db, app } from "@/lib/firebaseConfig";
 import { collection, getDocs } from 'firebase/firestore';
 import { Timestamp } from "firebase/firestore";
 
-import { useState,useEffect } from "react";
+import React, { useState,useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { date, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
@@ -21,8 +21,22 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
+
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+ 
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+
 import { toast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const LoginSchema = z.object({
   name: z.string().min(2, "O nome deve ter no mínimo 2 caracteres."),
@@ -30,11 +44,10 @@ const LoginSchema = z.object({
   email: z.string().email("Digite um e-mail válido."),
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres."),
   passwordAuth: z.string().min(6, "A senha deve ter no mínimo 6 caracteres."),
-  nascimento: z.string().refine((value)=>{
-    const definedDate = new Date(value);
-    const actualDate = new Date();
-    return definedDate <= actualDate;
-  }, {message: "A data de nascimento não pode ser superior ao ano atual!"})
+  nascimento: z.date().refine((value) => {
+    const now = new Date();
+    return value <= now;
+  }, { message: "A data de nascimento não pode ser superior ao ano atual!" }),
 }).refine((data) => data.password === data.passwordAuth, {
   message: "As senhas não coincidem.", path: ["passwordAuth"],
 });
@@ -43,6 +56,8 @@ type LoginData = z.infer<typeof LoginSchema>;
 
 export default function CadastroPage() {
   const [loading, setLoading] = useState(false);
+  const [dataNasci, setDataNasci] = React.useState<Date>()
+  const router = useRouter();
 
   const form = useForm<LoginData>({
     resolver: zodResolver(LoginSchema),
@@ -51,15 +66,12 @@ export default function CadastroPage() {
       password: "",
       username: "",
       name: "",
-      nascimento: ""
+      nascimento: undefined,
     }
   });
 
   const onSubmit = async (data: LoginData) => {
     setLoading(true);
-
-    const nascimentoDate = new Date(data.nascimento);
-    const formattedNascimento = nascimentoDate.toISOString().split("T")[0];
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
@@ -75,6 +87,7 @@ export default function CadastroPage() {
         username: data.username,
         email: data.email,
         nascimento: Timestamp.fromDate(new Date(data.nascimento)),
+        photoURL: "",
         createdAt: Timestamp.now(),
       });
   
@@ -84,6 +97,8 @@ export default function CadastroPage() {
         description: `Bem-vindo, ${data.name}!`,
       });
       
+      router.push("/")
+
     }catch(error: any){
       let message = "Erro ao cadastrar. Tente novamente.";
      if (error.code === "auth/email-already-in-use") {
@@ -167,20 +182,43 @@ export default function CadastroPage() {
                     )}
                   />
 
-                  <FormField
+                  <div className="">
+                    <FormField
                     control={form.control}
                     name="nascimento"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className=" flex-col flex-1 space-y-2">
                         <FormLabel>Data de Nascimento</FormLabel>
-                        <FormControl>
-                          <Input className="color:white" type="date" placeholder="••••••••" {...field} />
-                        </FormControl>
-                        <FormMessage className="text-red-500"/>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "w-[240px] justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {field.value ? format(field.value, "PPP") : <span>Selecione uma data</span>}
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage className="text-red-500" />
                       </FormItem>
                     )}
                   />
-                  
+                    </div>
+                
                 </div>
                 <div className="flex-1 space-y-5">
                 <FormField
