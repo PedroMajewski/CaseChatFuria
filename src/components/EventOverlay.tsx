@@ -58,14 +58,13 @@ const EventOverlay = ({ chatRoomId, onTitleUpdate }: EventOverlayProps) => {
           };
 
           setActiveEvent(event);
-          onTitleUpdate(title); // Atualiza o título do chat
+          onTitleUpdate(title); 
 
-          // Remove overlay visual depois de 3s (efeito rápido)
+          
           setTimeout(() => {
             setActiveEvent(null);
           }, 3000);
 
-          // Remove título depois da duração total
           setTimeout(() => {
             onTitleUpdate(null);
           }, endTime - now);

@@ -1,4 +1,4 @@
-'use client'; // Required for useEffect and useState
+'use client'; 
 
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
@@ -8,7 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { NewsItem } from '@/services/news';
 import { getNews } from '@/services/news';
 import Link from 'next/link';
-import { Newspaper } from 'lucide-react'; // Icon for news
+import { Newspaper } from 'lucide-react'; 
+
+//CÓDIGO GERADO COM IA APENAS PARA REPRESENTAÇÃO
 
 const NewsFeed: FC = () => {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
@@ -25,14 +27,14 @@ const NewsFeed: FC = () => {
       } catch (err) {
         console.error("Failed to fetch news:", err);
         setError("Could not load news feed.");
-        setNewsItems([]); // Clear news on error
+        setNewsItems([]); 
       } finally {
         setLoading(false);
       }
     };
 
     fetchNews();
-  }, []); // Fetch only once on component mount
+  }, []); 
 
   if (loading) {
     return (
@@ -71,9 +73,9 @@ const NewsFeed: FC = () => {
   return (
     <div className="space-y-6">
        <h2 className="text-2xl font-bold flex items-center gap-2 text-primary">
-         <Newspaper className="h-6 w-6" /> Latest News & Updates
+         <Newspaper className="h-6 w-6" /> Ultimas Notícias
        </h2>
-      {newsItems.length === 0 && !loading && <p>No news available at the moment.</p>}
+      {newsItems.length === 0 && !loading && <p>Sem Notícias no Momento :(.</p>}
       {newsItems.map((item) => (
         <Card key={item.id} className="shadow-lg bg-card/80 backdrop-blur hover:bg-card/90 transition-colors duration-200">
           <CardHeader>
@@ -83,8 +85,8 @@ const NewsFeed: FC = () => {
           <CardContent>
             <p className="text-muted-foreground mb-4">{item.summary}</p>
             {item.link && (
-              <Button asChild variant="outline" size="sm">
-                <Link href={item.link}>Read More</Link>
+              <Button disabled asChild variant="outline" size="sm">
+                <Link href={item.link}>Leia Mais!</Link>
               </Button>
             )}
           </CardContent>

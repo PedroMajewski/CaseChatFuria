@@ -125,33 +125,15 @@ export default function HomePage() {
              </CardContent>
            </Card>
            <LiveGameStatusDisplay/>
-          <NewsFeed />
-
-            
-
-          {/* Placeholder for History/Polls */}
-           <Card className="shadow-md bg-card/80 backdrop-blur">
-            <CardHeader>
-              <CardTitle>More Features</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button variant="secondary" className="w-full" disabled>View Match History</Button>
-              <Button variant="secondary" className="w-full" disabled>Vote in Fan Polls</Button>
-              <Button variant="secondary" className="w-full" disabled>Win Prizes!</Button>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Right Column: Chat Interface */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-8">
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsList className="grid w-full mb-4">
               <TabsTrigger value="general">
-                 <Users className="h-4 w-4 mr-2" /> Chat Geral
+                 <Users className="h-4 w-4 mr-2 w-full bg-transparent" /> Chat Geral
               </TabsTrigger>
-              <TabsTrigger value="simulated">
-                 <Bot className="h-4 w-4 mr-2" /> Converse com o time
-               </TabsTrigger>
             </TabsList>
             <TabsContent value="general">
               <ChatInterface chatRoomId="GsEj1NelD1a669Oqby68"/>
@@ -160,6 +142,7 @@ export default function HomePage() {
               <ChatInterface chatRoomId="simulated"/>
             </TabsContent>
           </Tabs>
+          <NewsFeed />
         </div>
       </div>
     </div>
