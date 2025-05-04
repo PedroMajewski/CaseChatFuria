@@ -1,6 +1,6 @@
 "use client"
 
-import LiveGameStatusDisplay from '@/components/live-game-status';
+import LiveGameStatusDisplay from '@/components/sections/live-game-status';
 import NewsFeed from '@/components/news-feed';
 import ChatInterface from '@/components/sections/chat-interface';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,16 +16,36 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebaseConfig';
 
+//Serviços
+
 export default function HomePage() {
 
   const { user, loading } = useAuth();
   const [username, setUserName] = useState("");
   const [name,setName] = useState("");
+  const [stats,setStats] = useState(null)
+  const [isLiveNow,setIsLiveNow] = useState(false);
+  const [liveVideoId, setLiveVideoId] = useState<string | null>(null);
 
-  // Mock match ID, in a real app this might come from routing or state management
-  const currentMatchId = "mock-match-123";
+  //Função Simulada de Testes com LIVE
+  useEffect(() => {
+    const simulateLiveStatus = () => {
+      const isLive = Math.random() > 0.5; 
+      if (isLive) {
+        // Simula que está passando uma live
+        setIsLiveNow(true);
+        setLiveVideoId("OWoG6XMiU8g"); 
+      } else {
+        // Simula que não tem live
+        setLiveVideoId(null);
+      }
+    };
+
+    simulateLiveStatus();
+  }, []);
 
   useEffect(() => {
+
     const buscarNomeUsuario = async () => {
       if (!user?.email) return;
 
@@ -52,29 +72,37 @@ export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-12">
 
-      {/* Carousel Section / Welcome */}
-      <LiveorCarousel/>
+      {/* Carousel e Live Section / Welcome */}
+      <LiveorCarousel isLive={isLiveNow} liveId={liveVideoId || ""}/>
+      
 
       {/* Hero Section / Welcome */}
-      <section className="text-center py-10 bg-gradient-to-r from-primary/10 via-background to-primary/10 rounded-lg shadow-inner">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary tracking-tight">Bem Vindo ao FURIA Fan Zone!</h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Sua central de informações da Furia em Primeira Mão!
-        </p>
-        {user && (
-            <p className="text-2xl mt-5 font-normal max-w-2xl mx-auto">
-            Agora você ta na casa! - <strong>{username}</strong>
+      {isLiveNow ? (
+        <LiveGameStatusDisplay/>
+      ) : (
+        
+        <section className="text-center py-10 bg-gradient-to-r from-primary/10 via-background to-primary/10 rounded-lg shadow-inner">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary tracking-tight">Bem Vindo ao FURIA Fan Zone!</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Sua central de informações da Furia em Primeira Mão!
           </p>
-        )}
-         {!user && (
-        <div className="mt-6">
-          <Link href={"/login"}>
-           <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Entre na Torcida! (Log In / Sign Up)
-           </Button>
-           </Link>
-        </div>)}
-      </section>
+          {user && (
+              <p className="text-2xl mt-5 font-normal max-w-2xl mx-auto">
+              Agora você ta na casa! - <strong>{username}</strong>
+            </p>
+          )}
+          {!user && (
+          <div className="mt-6">
+            <Link href={"/login"}>
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                Entre na Torcida! (Log In / Sign Up)
+            </Button>
+            </Link>
+          </div>)}
+        </section>
+      )
+        
+      }
 
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -96,9 +124,10 @@ export default function HomePage() {
               )}
              </CardContent>
            </Card>
-
-          <LiveGameStatusDisplay matchId={currentMatchId} /> {/*Live Status em tempo real*/}
+           <LiveGameStatusDisplay/>
           <NewsFeed />
+
+            
 
           {/* Placeholder for History/Polls */}
            <Card className="shadow-md bg-card/80 backdrop-blur">
@@ -120,22 +149,12 @@ export default function HomePage() {
               <TabsTrigger value="general">
                  <Users className="h-4 w-4 mr-2" /> Chat Geral
               </TabsTrigger>
-              <TabsTrigger value="match">
-                 <MessageSquare className="h-4 w-4 mr-2" /> Chat Match
-              </TabsTrigger>
               <TabsTrigger value="simulated">
                  <Bot className="h-4 w-4 mr-2" /> Converse com o time
                </TabsTrigger>
             </TabsList>
             <TabsContent value="general">
               <ChatInterface chatRoomId="GsEj1NelD1a669Oqby68"/>
-            </TabsContent>
-            <TabsContent value="match">
-               {/* Display Match chat only if a game is theoretically live */}
-               {/* You might add logic here based on liveGameStatus data */}
-              <ChatInterface chatRoomId="match"/>
-              {/* Fallback if no live game */}
-              {/* <Card><CardContent><p className="text-center p-8 text-muted-foreground">No live match chat currently active.</p></CardContent></Card> */}
             </TabsContent>
              <TabsContent value="simulated">
               <ChatInterface chatRoomId="simulated"/>

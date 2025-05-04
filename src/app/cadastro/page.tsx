@@ -1,7 +1,7 @@
 "use client";
 
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, query, setDoc, where } from "firebase/firestore";
 import { auth, db, app } from "@/lib/firebaseConfig";
 import { collection, getDocs } from 'firebase/firestore';
 import { Timestamp } from "firebase/firestore";
@@ -70,15 +70,30 @@ export default function CadastroPage() {
     }
   });
 
+  const isUsernameAvailable = async (nomeUsuario: string) => {
+    const usersRef = collection(db, 'usuarios'); 
+    const q = query(usersRef, where('username', '==', nomeUsuario)); 
+  
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.empty; 
+  };
+
   const onSubmit = async (data: LoginData) => {
     setLoading(true);
 
     try {
+
+      const isAvailable = await isUsernameAvailable(data.username);
+    
+      if (!isAvailable) {
+      throw new Error("Este nome de usuario ja esta em uso");
+    }
+
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const user = userCredential.user;
 
       await updateProfile(user, {
-        displayName: data.name
+        displayName: data.username
       });
 
       await setDoc(doc(db, "usuarios", user.uid), {
@@ -101,8 +116,10 @@ export default function CadastroPage() {
 
     }catch(error: any){
       let message = "Erro ao cadastrar. Tente novamente.";
-     if (error.code === "auth/email-already-in-use") {
+     if (error.code == "auth/email-already-in-use") {
       message = "Este e-mail já está em uso.";
+    }else if(error.code == "Este nome de usuario ja esta em uso"){
+      message = "Este nome de usuario já está em uso.";
     }
     toast({
       title: "Erro",

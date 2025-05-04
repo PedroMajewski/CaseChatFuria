@@ -82,11 +82,17 @@ export default {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+			  borderPulse: {
+				'0%': { borderColor: 'transparent', transform: 'scale(1)' },
+				'50%': { borderColor: '#ff4500', transform: 'scale(1.1)' },
+				'100%': { borderColor: 'transparent', transform: 'scale(1)' },
+			  },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+			'borderPulse': 'borderPulse 2s infinite',
   		}
   	}
   },

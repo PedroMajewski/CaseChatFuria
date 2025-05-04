@@ -9,6 +9,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SendHorizonal, Bot, User } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import QuickReactions from "@/components/QuickReactions"
+import EventOverlay from '@/components/EventOverlay';
 
 //Firebase
 import { db } from '@/lib/firebaseConfig';
@@ -23,7 +25,7 @@ interface Message {
 }
 
 interface ChatInterfaceProps {
-  chatRoomId: 'GsEj1NelD1a669Oqby68' | 'match' | 'simulated'; // Example room IDs
+  chatRoomId: 'GsEj1NelD1a669Oqby68' | 'mYeQg8DNSeuHthDTKKzd' | 'simulated'; // Example room IDs
 }
 
 const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
@@ -31,6 +33,7 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
   const [inputValue, setInputValue] = useState('');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { user, loading } = useAuth();
+  const [eventMoment, setEventMoment] = useState<'1v1' | 'clutch' | 'ace' | null>(null);
   
 
   useEffect(() => {
@@ -54,28 +57,6 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
 });
 
     return () => unsubscribe();
-
-    {/*
-    let initialMessages: Message[] = [];
-    if (chatRoomId === 'general') {
-      initialMessages = [
-        { id: 'g1', sender: 'FuriaFan99', text: 'VAMO FURIA!', timestamp: Date.now() - 10000, avatar: 'https://picsum.photos/seed/furia1/40/40' },
-        { id: 'g2', sender: 'CSGO_Pro', text: 'Good luck in the next match!', timestamp: Date.now() - 5000, avatar: 'https://picsum.photos/seed/furia2/40/40' },
-      ];
-    } else if (chatRoomId === 'match') {
-      initialMessages = [
-        { id: 'm1', sender: 'ModeratorBot', text: 'Welcome to the live match chat! Be respectful.', timestamp: Date.now() - 15000, isUser: false, avatar: '/icons/bot-avatar.png' }, // Use Bot icon if no avatar
-        { id: 'm2', sender: 'LiveCommentator', text: 'What an insane clutch from yuurih!', timestamp: Date.now() - 8000, avatar: 'https://picsum.photos/seed/commentator/40/40' },
-      ];
-    } else if (chatRoomId === 'simulated') {
-       initialMessages = [
-        { id: 's1', sender: 'arT Bot', text: 'Hey! Ready to talk strats? Or just W key?', timestamp: Date.now() - 5000, isUser: false, avatar: '/icons/art-avatar.png' }, // Specific bot avatar
-      ];
-    }
-     // Add a default user message for context
-    initialMessages.push({ id: 'u0', sender: 'You', text: 'Hey everyone!', timestamp: Date.now() - 2000, isUser: true });
-    setMessages(initialMessages);
-    */}
   }, [chatRoomId]);
 
   useEffect(() => {
@@ -83,6 +64,23 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMsg = messages[messages.length - 1].text.toLowerCase();
+      if (lastMsg.includes('1v1')) {
+        setEventMoment('1v1');
+        setTimeout(() => setEventMoment(null), 4000); // Oculta após 4s
+      } else if (lastMsg.includes('clutch')) {
+        setEventMoment('clutch');
+        setTimeout(() => setEventMoment(null), 4000);
+      } else if (lastMsg.includes('ace')) {
+        setEventMoment('ace');
+        setTimeout(() => setEventMoment(null), 4000);
+      }
+    }
+  }, [messages]);
+  
 
   
   const handleSendMessage = useCallback(async () => {
@@ -113,14 +111,15 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
   const getChatTitle = () => {
     switch (chatRoomId) {
       case 'GsEj1NelD1a669Oqby68': return ['Chat Geral','Aqui a chama da FURIA não se apaga'];
-      case 'match': return ['Chat da Partida','Comente aqui sobre o clutch!'];
+      case 'mYeQg8DNSeuHthDTKKzd': return ['Chat da Partida','Comente aqui sobre o clutch!'];
       case 'simulated': return ['Fale com o Time','Dê a call para nossos players'];
       default: return 'Chat';
     }
   }
 
   return (
-    <Card className="w-full h-[600px] flex flex-col shadow-lg bg-card/80 backdrop-blur">
+    <Card className="w-full h-[500px] flex flex-col shadow-lg bg-card/80 backdrop-blur md:h-[650px]">
+      <EventOverlay event={eventMoment} />
       <CardHeader>
         <CardTitle className="text-primary">{getChatTitle()[0]}</CardTitle>
         <CardDescription className="text-secondary text-normal font-2xl">{getChatTitle()[1]}</CardDescription>
@@ -149,18 +148,26 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
 
               {/* Exibe a mensagem */}
               <div
+                key={message.id}
                 className={`max-w-[70%] rounded-lg px-3 py-2 ${
                   message.sender === user?.displayName
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary text-secondary-foreground'
-                }`}
+                } ${message.text.toLowerCase().includes('clutch') ? 'bg-rose-900 text-white border border-rose-500 ' : ''}`} 
               >
                 {/* Exibe o nome do remetente, caso não seja o usuário */}
                 {message.sender !== user?.displayName && (
                   <p className="text-xs font-semibold mb-1 opacity-80">{message.sender}</p>
                 )}
-                <p className="text-sm">{message.text}</p>
+                
+                {/* Se for o momento clutch, exibe a mensagem com destaque */}
+                {message.text.toLowerCase().includes('clutch') ? (
+                  <p className="text-sm font-bold text-white">{message.text}</p>
+                ) : (
+                  <p className="text-sm">{message.text}</p>
+                )}
               </div>
+
 
               {/* Exibe o avatar do usuário, se for ele quem enviou a mensagem */}
               {message.sender === user?.displayName && (
@@ -190,15 +197,22 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
                 className="flex-grow mt-5"
                 aria-label="MensagemInput"
               />
-              <Button className='mt-5 h-9' onClick={handleSendMessage} size="icon" aria-label="Send message">
-                <SendHorizonal className="h-5 w-5" />
+      
+
+            {chatRoomId == "mYeQg8DNSeuHthDTKKzd" && (
+              <div className='flex items-center gap-1'>
+              <QuickReactions chatRoomId='mYeQg8DNSeuHthDTKKzd'/>
+              </div>
+            )}
+              <Button className='mt-5 h-9 flex  items-center gap-2' onClick={handleSendMessage} size="icon" aria-label="Send message">
+                <SendHorizonal className="h-5 w-full" />
               </Button>
             </>
           ) : (
             <>
               <Input
                 type="text"
-                placeholder="Você tem que realizar o login para usar essas funcionaldiades - Realize acima guerreiro!"
+                placeholder="Essa função equer Login - Faça agora mesmo jogador!"
                 value={inputValue}
                 className="flex-grow mt-5 text-center"
                 aria-label="MensagemInput"

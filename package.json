@@ -37,14 +37,18 @@
     "@radix-ui/react-tooltip": "^1.1.8",
     "@tanstack-query-firebase/react": "^1.0.5",
     "@tanstack/react-query": "^5.66.0",
+    "cheerio": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.6.0",
     "firebase": "^11.6.1",
+    "framer-motion": "^12.9.4",
+    "fs": "^0.0.1-security",
     "genkit": "^1.0.4",
     "hltv": "^3.5.0",
     "lucide-react": "^0.475.0",
+    "motion": "^12.9.4",
     "next": "^15.2.3",
     "patch-package": "^8.0.0",
     "react": "^18.3.1",
@@ -65,5 +69,22 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "5.8.3"
-  }
+  },
+  "description": "This is a NextJS starter in Firebase Studio.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PedroMajewski/CaseChatFuria.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/PedroMajewski/CaseChatFuria/issues"
+  },
+  "homepage": "https://github.com/PedroMajewski/CaseChatFuria#readme"
 }
