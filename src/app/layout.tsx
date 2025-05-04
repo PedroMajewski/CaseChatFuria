@@ -37,9 +37,8 @@ export default function RootLayout({
           <main className="flex-grow">
             {children}
           </main>
-          {/* You can add a Footer component here later if needed */}
         </div>
-        <Toaster /> {/* Add the Toaster for notifications */}
+        <Toaster />
       </body>
     </html>
   );

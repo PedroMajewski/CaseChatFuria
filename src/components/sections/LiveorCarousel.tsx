@@ -13,11 +13,13 @@ import { FC } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import ChatInterface from "./chat-interface";
+import LastMatchesTable from "../LastMatchesTable";
 
 interface LiveorCarouselProps {
   isLive: boolean;
   liveId: string;
 }
+
 
 const LiveorCarousel: FC<LiveorCarouselProps> = ({ isLive, liveId }) => {
   return (
@@ -56,6 +58,9 @@ const LiveorCarousel: FC<LiveorCarouselProps> = ({ isLive, liveId }) => {
       ) : (
         <Carousel opts={{ loop: true }}>
           <CarouselContent>
+            <CarouselItem>
+              <LastMatchesTable />
+            </CarouselItem>
             <CarouselItem className="flex items-center justify-center overflow-hidden w-full">
               <img
                 className="rounded-sm h-[75vh] md:h-full w-full object-cover"

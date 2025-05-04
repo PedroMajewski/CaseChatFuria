@@ -15,6 +15,7 @@ import EventOverlay from '@/components/EventOverlay';
 //Firebase
 import { db } from '@/lib/firebaseConfig';
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import EventTrigger from '../EventTrigger';
 
 interface Message {
   id: string;
@@ -25,7 +26,7 @@ interface Message {
 }
 
 interface ChatInterfaceProps {
-  chatRoomId: 'GsEj1NelD1a669Oqby68' | 'mYeQg8DNSeuHthDTKKzd' | 'simulated'; // Example room IDs
+  chatRoomId: 'GsEj1NelD1a669Oqby68' | 'mYeQg8DNSeuHthDTKKzd' | 'simulated';
 }
 
 const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
@@ -33,7 +34,7 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
   const [inputValue, setInputValue] = useState('');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { user, loading } = useAuth();
-  const [eventMoment, setEventMoment] = useState<'1v1' | 'clutch' | 'ace' | null>(null);
+  const [eventTitle, setEventTitle] = useState<string | null>(null);;
   
 
   useEffect(() => {
@@ -63,24 +64,7 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
-  }, [messages]);
-
-  useEffect(() => {
-    if (messages.length > 0) {
-      const lastMsg = messages[messages.length - 1].text.toLowerCase();
-      if (lastMsg.includes('1v1')) {
-        setEventMoment('1v1');
-        setTimeout(() => setEventMoment(null), 4000); // Oculta após 4s
-      } else if (lastMsg.includes('clutch')) {
-        setEventMoment('clutch');
-        setTimeout(() => setEventMoment(null), 4000);
-      } else if (lastMsg.includes('ace')) {
-        setEventMoment('ace');
-        setTimeout(() => setEventMoment(null), 4000);
-      }
-    }
-  }, [messages]);
-  
+  }, [messages]);  
 
   
   const handleSendMessage = useCallback(async () => {
@@ -119,10 +103,13 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
 
   return (
     <Card className="w-full h-[500px] flex flex-col shadow-lg bg-card/80 backdrop-blur md:h-[650px]">
-      <EventOverlay event={eventMoment} />
+      <EventOverlay chatRoomId={chatRoomId} onTitleUpdate={setEventTitle} />
       <CardHeader>
         <CardTitle className="text-primary">{getChatTitle()[0]}</CardTitle>
         <CardDescription className="text-secondary text-normal font-2xl">{getChatTitle()[1]}</CardDescription>
+        {eventTitle && (
+          <p className="text-sm text-accent animate-pulse">{eventTitle}</p>
+        )}
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden p-0">
         <ScrollArea className="h-full p-4 overflow-auto" ref={scrollAreaRef}>
@@ -153,19 +140,18 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
                   message.sender === user?.displayName
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary text-secondary-foreground'
-                } ${message.text.toLowerCase().includes('clutch') ? 'bg-rose-900 text-white border border-rose-500 ' : ''}`} 
+                } ${message.text.toLowerCase().includes('clutch') ? 'bg-rose-900 text-white border border-rose-500 font-bold ' : ''}
+                ${message.text.toLowerCase().includes('1v1') ? 'bg-blue-200 text-black border border-blue-500 font-bold ' : ''}
+                ${message.text.toLowerCase().includes('furia') ? 'bg-violet-700 text-white border border-violet-500 font-bold ' : ''}
+                
+                `} 
               >
                 {/* Exibe o nome do remetente, caso não seja o usuário */}
                 {message.sender !== user?.displayName && (
                   <p className="text-xs font-semibold mb-1 opacity-80">{message.sender}</p>
                 )}
-                
-                {/* Se for o momento clutch, exibe a mensagem com destaque */}
-                {message.text.toLowerCase().includes('clutch') ? (
-                  <p className="text-sm font-bold text-white">{message.text}</p>
-                ) : (
+          
                   <p className="text-sm">{message.text}</p>
-                )}
               </div>
 
 
@@ -222,6 +208,9 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
           )}
         </div>
       </CardFooter>
+      {chatRoomId == "mYeQg8DNSeuHthDTKKzd" && (
+              <EventTrigger chatRoomId={chatRoomId}/>
+      )}
     </Card>
   );
 };

@@ -6,6 +6,9 @@ import { useAuth } from '@/hooks/use-auth';
 import { Button } from '../ui/button';
 import { toast } from '@/hooks/use-toast';
 import { getAuth, signOut } from 'firebase/auth';
+import { InstagramIcon } from 'lucide-react';
+import { ShoppingBagIcon } from 'lucide-react';
+
 
 
 export default function Header() {
@@ -49,24 +52,12 @@ export default function Header() {
         </Link>
       </div>
 
-      <nav className="hidden md:flex space-x-4">
-        <Link href="/">
-          <span className="text-sm sm:text-base hover:text-primary duration-200 hover:scale-150">Rolando Agora</span>
-        </Link>
-        <Link href="/">
-          <span className="text-sm sm:text-base hover:text-primary duration-200 hover:scale-150">Fale com o Time</span>
-        </Link>
-        <Link href="/">
-          <span className="text-sm sm:text-base hover:text-primary duration-200 hover:scale-150">NewsLetter</span>
-        </Link>
-      </nav>
-
       <div className="flex items-center space-x-4">
-        <Link href="/" className="hover:text-primary duration-200 hover:scale-110">
-          <MessageCircleIcon size={20} />
+        <Link href="/https://www.furia.gg/" className="hover:text-primary duration-200 hover:scale-110">
+          <ShoppingBagIcon size={20} />
         </Link>
-        <Link href="/" className="hover:text-primary duration-200 hover:scale-110">
-          <CameraIcon size={20} />
+        <Link href="https://www.instagram.com/furiagg/" className="hover:text-primary duration-200 hover:scale-110">
+          <InstagramIcon size={20} />
         </Link>
         {!user ? (
           <Link href={"/login"} className="hover:text-primary duration-200 hover:scale-110"><User size={20} /></Link>
