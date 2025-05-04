@@ -134,28 +134,29 @@ const ChatInterface: FC<ChatInterfaceProps> = ({ chatRoomId }) => {
               )}
 
               {/* Exibe a mensagem */}
-              <div
-                key={message.id}
-                className={`max-w-[70%] rounded-lg px-3 py-2 ${
-                  message.sender === user?.displayName
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-secondary text-secondary-foreground'
-                } ${message.text.toLowerCase().includes('clutch') ? 'bg-rose-900 text-white border border-rose-500 font-bold ' : ''}
-                ${message.text.toLowerCase().includes('1v1') ? 'bg-blue-200 text-black border border-blue-500 font-bold ' : ''}
-                ${message.text.toLowerCase().includes('furia') ? 'bg-violet-700 text-white border border-violet-500 font-bold ' : ''}
-                
-                `} 
-              >
-                {/* Exibe o nome do remetente, caso não seja o usuário */}
-                {message.sender !== user?.displayName && (
-                  <p className="text-xs font-semibold mb-1 opacity-80">{message.sender}</p>
-                )}
-          
+                <div
+                  key={message.id}
+                  className={`max-w-[70%] rounded-lg px-3 py-2 ${
+                    // Aplica o estilo dependendo se o remetente é o usuário logado ou não
+                    message.sender === user?.displayName
+                      ? 'bg-primary text-primary-foreground'  // Estilo para o usuário logado
+                      : 'bg-primary text-primary-foreground'  // Estilo para outros remetentes ou visitantes
+                  }
+                  // Estilos específicos para palavras-chave
+                  ${message.text.toLowerCase().includes('clutch') ? 'bg-rose-900 text-white border border-rose-500 font-bold' : ''}
+                  ${message.text.toLowerCase().includes('1v1') ? 'bg-blue-200 text-black border border-blue-500 font-bold' : ''}
+                  ${message.text.toLowerCase().includes('furia') ? 'bg-violet-700 text-white border border-violet-500 font-bold' : ''}
+                  `}
+                >
+                  {/* Exibe o nome do remetente, caso não seja o usuário */}
+                  {message.sender && message.sender !== user?.displayName && (
+                    <p className="text-xs font-semibold mb-1 opacity-80">{message.sender}</p>
+                  )}
+
                   <p className="text-sm">{message.text}</p>
-              </div>
+                </div>
 
-
-              {/* Exibe o avatar do usuário, se for ele quem enviou a mensagem */}
+              
               {message.sender === user?.displayName && (
                 <Avatar className="h-8 w-8">
                   <AvatarFallback>
