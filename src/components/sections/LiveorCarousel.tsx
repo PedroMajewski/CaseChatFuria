@@ -58,15 +58,15 @@ const LiveorCarousel: FC<LiveorCarouselProps> = ({ isLive, liveId }) => {
       ) : (
         <Carousel opts={{ loop: true }}>
           <CarouselContent>
-            <CarouselItem>
-              <LastMatchesTable />
-            </CarouselItem>
             <CarouselItem className="flex items-center justify-center overflow-hidden w-full">
               <img
                 className="rounded-sm h-[75vh] md:h-full w-full object-cover"
                 src="https://furiagg.fbitsstatic.net/img/b/1be4afd5-a727-4555-81fd-e779a32578be.jpg?w=1920&v=no-change"
                 alt="Furia"
               />
+            </CarouselItem>
+            <CarouselItem>
+              <LastMatchesTable />
             </CarouselItem>
           </CarouselContent>
         </Carousel>
