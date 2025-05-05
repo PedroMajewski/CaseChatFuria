@@ -65,9 +65,6 @@ const LiveorCarousel: FC<LiveorCarouselProps> = ({ isLive, liveId }) => {
                 alt="Furia"
               />
             </CarouselItem>
-            <CarouselItem>
-              <LastMatchesTable />
-            </CarouselItem>
           </CarouselContent>
         </Carousel>
       )}

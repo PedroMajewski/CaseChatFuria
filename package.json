@@ -48,6 +48,7 @@
     "genkit": "^1.0.4",
     "hltv": "^3.5.0",
     "lucide-react": "^0.475.0",
+    "mongodb": "^6.16.0",
     "motion": "^12.9.4",
     "next": "^15.2.3",
     "patch-package": "^8.0.0",

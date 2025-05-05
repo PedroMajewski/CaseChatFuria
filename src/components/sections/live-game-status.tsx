@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Flame, Crosshair, CircleIcon } from 'lucide-react';
+import getMatchStats from '@/api/jogoaovivo';
 
 interface PlayerStats {
   name: string;
@@ -70,26 +71,13 @@ const LiveGameStatusDisplay: FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchMatchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch('http://127.0.0.1:5001/furiachatdatabase/us-central1/hltvfuria/partidaFixa');
-        if (!res.ok) {
-          throw new Error('Erro ao buscar dados da partida');
-        }
-        const data: MatchStats = await res.json();
-        setMatchData(data);
-      } catch (err) {
-        console.error('Erro ao buscar dados da partida:', err);
-        setError('Erro ao carregar dados da partida.');
-        setMatchData(null);
-      } finally {
-        setLoading(false);
-      }
+    const loadData = () => {
+      const data = getMatchStats();
+      setMatchData(data);
+      setLoading(false);
     };
 
-    fetchMatchData();
+    setTimeout(loadData, 500);
   }, []);
 
   if (loading) {
